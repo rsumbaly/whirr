@@ -47,7 +47,6 @@ public class VoldemortClusterActionHandler extends ClusterActionHandlerSupport {
   public static final int CLIENT_PORT = 6666;
   public static final int ADMIN_PORT = 6667;
   public static final int HTTP_PORT = 8081;
-  public static final String newLineChar = System.getProperty("line.separator");
   
   public static final String PARTITIONS_PER_NODE = "whirr.voldemort.partitions";
   
@@ -78,7 +77,7 @@ public class VoldemortClusterActionHandler extends ClusterActionHandlerSupport {
     FirewallSettings.authorizeIngress(computeServiceContext,
             cluster.getInstances(), clusterSpec, HTTP_PORT);
     
-    String servers = Joiner.on(newLineChar).join(getPublicIps(cluster.getInstances()));
+    String servers = Joiner.on(' ').join(getPublicIps(cluster.getInstances()));
     
     Configuration config = event.getClusterSpec().getConfiguration();
     int partitionsPerNode = config.getInt(PARTITIONS_PER_NODE, 10);

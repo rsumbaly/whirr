@@ -41,7 +41,6 @@ import voldemort.client.protocol.admin.AdminClientConfig;
 
 public class VoldemortServiceTest {
 
-  private final static int NUM_ATTEMPTS = 3;
   private final static int NUM_KEYS = 1000;
   
   private ClusterSpec clusterSpec;
@@ -65,7 +64,7 @@ public class VoldemortServiceTest {
 
   private void waitForBootstrap() {
     for ( Instance instance : cluster.getInstances()) {
-	  for (int attempts = 0 ; attempts < NUM_ATTEMPTS ; attempts++ ) {
+	  while( true ) {
 	    try {
 		  AdminClient client = new AdminClient("tcp://" + 
 		                                       instance.getPublicAddress() + 
