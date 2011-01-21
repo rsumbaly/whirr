@@ -77,7 +77,7 @@ public class VoldemortClusterActionHandler extends ClusterActionHandlerSupport {
     FirewallSettings.authorizeIngress(computeServiceContext,
             cluster.getInstances(), clusterSpec, HTTP_PORT);
     
-    String servers = Joiner.on(' ').join(getPublicIps(cluster.getInstances()));
+    String servers = Joiner.on(' ').join(getConcatenatedIps(cluster.getInstances()));
     
     Configuration config = event.getClusterSpec().getConfiguration();
     int partitionsPerNode = config.getInt(PARTITIONS_PER_NODE, 10);
@@ -89,18 +89,41 @@ public class VoldemortClusterActionHandler extends ClusterActionHandlerSupport {
   protected void afterConfigure(ClusterActionEvent event) {
     ClusterSpec clusterSpec = event.getClusterSpec();
     Cluster cluster = event.getCluster();
-    LOG.info("Completed setup of Voldemort {}", clusterSpec.getClusterName());
     String hosts = Joiner.on(',').join(getPublicIps(cluster.getInstances()));
-    LOG.info("Hosts: {}", hosts);
+    LOG.info("Completed setup of Voldemort {} with hosts {}", 
+             clusterSpec.getClusterName(), hosts);
   }
   
-  private List<String> getPublicIps(Set<Instance> set) {
-    return Lists.transform(Lists.newArrayList(set),
+  /**
+   * Given a set of instances returns a list of their public ips
+   * 
+   * @param instances Set of instances in the cluster
+   * @return List of all public ips as strings
+   */
+  private List<String> getPublicIps(Set<Instance> instances) {
+    return Lists.transform(Lists.newArrayList(instances),
         new Function<Instance, String>() {
       @Override
       public String apply(Instance instance) {
-        return instance.getPrivateAddress().getHostAddress();
+        return instance.getPublicAddress().getHostAddress();
       }
     });
   }
+  
+  /**
+   * Returns the ips of all instances concatenated as <public ip>:<private ip>
+   * 
+   * @param instances Set of instances in the cluster
+   * @return List of all public and private ips as strings
+   */
+  private List<String> getConcatenatedIps(Set<Instance> instances) {
+      return Lists.transform(Lists.newArrayList(instances),
+          new Function<Instance, String>() {
+        @Override
+        public String apply(Instance instance) {
+          return instance.getPublicAddress().getHostAddress() + ":" +
+                 instance.getPrivateAddress().getHostAddress();
+        }
+      });
+    }
 }

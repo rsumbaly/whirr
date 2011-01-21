@@ -21,9 +21,9 @@
                                                                                                                                         
 set -x                                                                                                                                  
 set -e                                                                                                                                  
+
+. /etc/profile
                                                        
-VOLDEMORT_HOME=/var/log/voldemort
-VOLDEMORT_ROOT=/usr/local/voldemort
 CLUSTER_NAME=voldemort
 
 while getopts "c:p:n:" OPTION; do                                                                                                           
@@ -69,11 +69,11 @@ grep -v "^node.id=" $prop_file.bak > $prop_file
 if [[ $# -gt 0 ]]; then
   id=0
   for server in "$@"; do
-    if [ $server == $SELF_HOST ]; then
+    if [[ $server == *$SELF_HOST* ]]; then
       myid=$id
       echo -e "\nnode.id=$id" >> $prop_file
     fi
-    echo -e "$server:$server\n" >> $hostname_file 
+    echo -e "$server\n" >> $hostname_file 
     id=$((id+1))
   done
 
@@ -90,7 +90,7 @@ fi
 # Set up the cluster metadata
 chmod +x $VOLDEMORT_ROOT/contrib/ec2-testing/bin/run-class.sh
 chmod +x $VOLDEMORT_ROOT/contrib/ec2-testing/bin/voldemort-clustergenerator.sh
-$VOLDEMORT_ROOT/contrib/ec2-testing/bin/voldemort-clustergenerator.sh --clustername $CLUSTER_NAME --partitions $PARTITIONS_PER_NODE --hostnames $hostname_file > $VOLDEMORT_HOME/config/cluster.xml
+$VOLDEMORT_ROOT/contrib/ec2-testing/bin/voldemort-clustergenerator.sh --useinternal false --clustername $CLUSTER_NAME --partitions $PARTITIONS_PER_NODE --hostnames $hostname_file > $VOLDEMORT_HOME/config/cluster.xml
 
 # Start Voldemort
 nohup /etc/rc.local &

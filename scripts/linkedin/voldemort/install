@@ -21,9 +21,9 @@
 set -x
 set -e
 
-VOLDEMORT_VERSION=${1:-0.81}
+VOLDEMORT_VERSION=${1:-0.90.RC2}
 VOLDEMORT_ROOT=/usr/local/voldemort
-VOLDEMORT_TAR_URL=http://test.project-voldemort.com:8080/job/release-081/lastSuccessfulBuild/artifact/dist/voldemort-$VOLDEMORT_VERSION.tar.gz
+VOLDEMORT_TAR_URL=http://test.project-voldemort.com:8080/job/release-090/lastSuccessfulBuild/artifact/dist/voldemort-$VOLDEMORT_VERSION.tar.gz
 VOLDEMORT_HOME=/var/log/voldemort
 
 v_tar_file=`basename $VOLDEMORT_TAR_URL`
@@ -60,6 +60,6 @@ cp $VOLDEMORT_ROOT/config/single_node_cluster/config/* $VOLDEMORT_HOME/config/.
 sed -i -e "s/exit 0//" /etc/rc.local
 sed -i -e "s/voldemort//" /etc/rc.local
 cat >> /etc/rc.local <<EOF
-$VOLDEMORT_ROOT/bin/voldemort-server.sh > /dev/null 2>&1 &
+$VOLDEMORT_ROOT/bin/voldemort-server.sh > $VOLDEMORT_HOME/voldemort.log 2>&1 &
 EOF
 

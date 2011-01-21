@@ -89,5 +89,15 @@
       <scope>system</scope>
       <systemPath>${basedir}/lib/linkedin-voldemort-0.90.jar</systemPath>
     </dependency>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1</version>
+    </dependency>
  </dependencies>
 </project>
