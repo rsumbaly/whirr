@@ -71,6 +71,7 @@ public class VoldemortServiceTest {
 		                                       ":" + VoldemortClusterActionHandler.ADMIN_PORT, 
 		                                       new AdminClientConfig());
 		  client.getAdminClientCluster();
+		  break;
 	    } catch (Exception e) {
 	      System.out.print(".");
 	      try {
